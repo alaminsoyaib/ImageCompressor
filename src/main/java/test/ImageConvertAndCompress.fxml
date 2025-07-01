@@ -9,8 +9,8 @@
    <children>
       <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="380.0" prefWidth="500.0" spacing="20.0">
          <children>
-            <Button fx:id="image" mnemonicParsing="false" text="Select Image" />
-            <Button fx:id="ProcessButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Start Process" />
+            <Button fx:id="image" mnemonicParsing="false" onMouseClicked="#onSelectImageClick" text="Select Image" />
+            <Button fx:id="ProcessButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#onProcessClick" text="Start Process" />
             <Label fx:id="Modal" text="Label" />
          </children>
       </VBox>
