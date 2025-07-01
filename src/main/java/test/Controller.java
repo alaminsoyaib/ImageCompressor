@@ -40,16 +40,10 @@ public class Controller {
         done.setVisible(false);
 
         FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter jpegExtentionFilter = new FileChooser.ExtensionFilter(
-                "Jpeg Images (.jpeg, .jpg)",
-                "*.jpeg", "*.jpg");
-        FileChooser.ExtensionFilter pngExtentionFilter = new FileChooser.ExtensionFilter(
-                "PNG Images (.png)",
-                "*.png");
         FileChooser.ExtensionFilter allSupportedFilter = new FileChooser.ExtensionFilter(
                 "All Supported Images (.jpeg, .jpg, .png)",
                 "*.jpeg", "*.jpg", "*.png");
-        fileChooser.getExtensionFilters().addAll(allSupportedFilter, jpegExtentionFilter, pngExtentionFilter);
+        fileChooser.getExtensionFilters().addAll(allSupportedFilter);
         File image = fileChooser.showOpenDialog(new Stage());
         if (image != null)
             imagePath.setText(image.toString());
