@@ -12,20 +12,20 @@ import java.io.File;
  * This demonstrates how easy it is to reuse the image processing functionality
  */
 public class ExampleController {
-    
+
     @FXML
     private Button selectBtn;
-    
+
     @FXML
     private Label statusLabel;
-    
+
     private File selectedFile;
-    
+
     @FXML
     public void initialize() {
         statusLabel.setText("Ready");
     }
-    
+
     @FXML
     protected void onSelectImage(MouseEvent event) {
         selectedFile = ImageProcessingService.selectImageFile();
@@ -37,32 +37,32 @@ public class ExampleController {
             statusLabel.setText("No file selected");
         }
     }
-    
+
     private void processImage() {
-        if (selectedFile == null) return;
-        
+        if (selectedFile == null)
+            return;
+
         // For this example, we'll auto-process with default settings
         Integer targetSize = selectedFile.getName().toLowerCase().endsWith(".png") ? null : 100;
-        
+
         ImageProcessingService.processImage(
-            selectedFile.getAbsolutePath(),
-            targetSize,
-            new ImageProcessingService.ProcessingCallback() {
-                @Override
-                public void onProgress(String message) {
-                    statusLabel.setText("Processing: " + message);
-                }
-                
-                @Override
-                public void onComplete(String result) {
-                    statusLabel.setText("Done: " + result);
-                }
-                
-                @Override
-                public void onError(String error) {
-                    statusLabel.setText("Error: " + error);
-                }
-            }
-        );
+                selectedFile.getAbsolutePath(),
+                targetSize,
+                new ImageProcessingService.ProcessingCallback() {
+                    @Override
+                    public void onProgress(String message) {
+                        statusLabel.setText("Processing: " + message);
+                    }
+
+                    @Override
+                    public void onComplete(String result) {
+                        statusLabel.setText("Done: " + result);
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        statusLabel.setText("Error: " + error);
+                    }
+                });
     }
 }

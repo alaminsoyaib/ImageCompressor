@@ -11,34 +11,34 @@ import java.io.File;
 import java.util.Optional;
 
 public class secondController {
-    
+
     @FXML
     private Button image;
-    
+
     @FXML
     private Button ProcessButton;
-    
+
     @FXML
     private Label Modal;
-    
+
     private File selectedImageFile;
-    
+
     @FXML
     public void initialize() {
         Modal.setText("Ready to process images");
         ProcessButton.setDisable(true);
-        
+
         // Set up button click handlers
         image.setOnMouseClicked(this::onSelectImageClick);
         ProcessButton.setOnMouseClicked(this::onProcessClick);
     }
-    
+
     @FXML
     protected void onSelectImageClick(MouseEvent event) {
         Modal.setText("Selecting image...");
-        
+
         selectedImageFile = ImageProcessingService.selectImageFile();
-        
+
         if (selectedImageFile != null) {
             image.setText("Selected: " + selectedImageFile.getName());
             Modal.setText("Image selected: " + selectedImageFile.getName());
@@ -49,27 +49,27 @@ public class secondController {
             ProcessButton.setDisable(true);
         }
     }
-    
+
     @FXML
     protected void onProcessClick(MouseEvent event) {
         if (selectedImageFile == null) {
             Modal.setText("Please select an image first");
             return;
         }
-        
+
         ProcessButton.setDisable(true);
-        
+
         // Determine if we need target size for JPEG compression
         Integer targetSize = null;
         String extension = getFileExtension(selectedImageFile.getName());
-        
+
         if (!extension.toLowerCase().equals(".png")) {
             // For JPEG files, ask for target size
             TextInputDialog dialog = new TextInputDialog("100");
             dialog.setTitle("JPEG Compression");
             dialog.setHeaderText("Target File Size");
             dialog.setContentText("Enter target file size in KB:");
-            
+
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
                 try {
@@ -85,36 +85,35 @@ public class secondController {
                 return;
             }
         }
-        
+
         // Process the image using the service
         ImageProcessingService.processImage(
-            selectedImageFile.getAbsolutePath(),
-            targetSize,
-            new ImageProcessingService.ProcessingCallback() {
-                @Override
-                public void onProgress(String message) {
-                    Platform.runLater(() -> Modal.setText(message));
-                }
-                
-                @Override
-                public void onComplete(String result) {
-                    Platform.runLater(() -> {
-                        Modal.setText(result);
-                        ProcessButton.setDisable(false);
-                    });
-                }
-                
-                @Override
-                public void onError(String error) {
-                    Platform.runLater(() -> {
-                        Modal.setText(error);
-                        ProcessButton.setDisable(false);
-                    });
-                }
-            }
-        );
+                selectedImageFile.getAbsolutePath(),
+                targetSize,
+                new ImageProcessingService.ProcessingCallback() {
+                    @Override
+                    public void onProgress(String message) {
+                        Platform.runLater(() -> Modal.setText(message));
+                    }
+
+                    @Override
+                    public void onComplete(String result) {
+                        Platform.runLater(() -> {
+                            Modal.setText(result);
+                            ProcessButton.setDisable(false);
+                        });
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Platform.runLater(() -> {
+                            Modal.setText(error);
+                            ProcessButton.setDisable(false);
+                        });
+                    }
+                });
     }
-    
+
     private String getFileExtension(String fileName) {
         int dotIndex = fileName.lastIndexOf('.');
         if (dotIndex > 0 && dotIndex < fileName.length() - 1) {

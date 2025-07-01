@@ -32,7 +32,7 @@ public class Controller {
     @FXML
     protected void onCompressClick(MouseEvent event) {
         compressButton.setDisable(true);
-        
+
         Integer targetSize = null;
         if (!fileSize.getText().isEmpty()) {
             try {
@@ -43,29 +43,28 @@ public class Controller {
                 return;
             }
         }
-        
+
         ImageProcessingService.processImage(
-            imagePath.getText(),
-            targetSize,
-            new ImageProcessingService.ProcessingCallback() {
-                @Override
-                public void onProgress(String message) {
-                    setDoneText(message);
-                }
-                
-                @Override
-                public void onComplete(String result) {
-                    setDoneText(result);
-                    compressButton.setDisable(false);
-                }
-                
-                @Override
-                public void onError(String error) {
-                    setDoneText(error);
-                    compressButton.setDisable(false);
-                }
-            }
-        );
+                imagePath.getText(),
+                targetSize,
+                new ImageProcessingService.ProcessingCallback() {
+                    @Override
+                    public void onProgress(String message) {
+                        setDoneText(message);
+                    }
+
+                    @Override
+                    public void onComplete(String result) {
+                        setDoneText(result);
+                        compressButton.setDisable(false);
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        setDoneText(error);
+                        compressButton.setDisable(false);
+                    }
+                });
     }
 
     private void setDoneText(String s) {
