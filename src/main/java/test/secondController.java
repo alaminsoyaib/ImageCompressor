@@ -1,6 +1,5 @@
 package test;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -87,18 +86,9 @@ public class secondController {
         }
 
         // Process the image using the service
-        ImageProcessingService.processImage(
-                selectedImageFile.getAbsolutePath(),
-                targetSize,
-                message -> Platform.runLater(() -> Modal.setText(message)), // onProgress
-                result -> Platform.runLater(() -> { // onComplete
-                    Modal.setText(result);
-                    ProcessButton.setDisable(false);
-                }),
-                error -> Platform.runLater(() -> { // onError
-                    Modal.setText(error);
-                    ProcessButton.setDisable(false);
-                }));
+        Modal.setText("Processing started - check terminal for progress...");
+        ImageProcessingService.processImage(selectedImageFile.getAbsolutePath(), targetSize);
+        ProcessButton.setDisable(false);
     }
 
     private String getFileExtension(String fileName) {

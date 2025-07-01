@@ -16,12 +16,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.function.Consumer;
 
 public class ImageProcessingService {
 
     /**
      * Opens a file chooser dialog to select an image file
+     * 
      * @return Selected File or null if cancelled
      */
     public static File selectImageFile() {
@@ -33,25 +33,21 @@ public class ImageProcessingService {
 
     /**
      * Processes an image file (compression for JPEG, conversion for PNG)
-     * @param imagePath Path to the input image
-     * @param targetSizeKB Target size in KB (only used for JPEG compression, can be null for PNG)
-     * @param onProgress Callback for progress updates
-     * @param onComplete Callback for completion with result message
-     * @param onError Callback for error handling
+     * 
+     * @param imagePath    Path to the input image
+     * @param targetSizeKB Target size in KB (only used for JPEG compression, can be
+     *                     null for PNG)
      */
-    public static void processImage(String imagePath, Integer targetSizeKB, 
-                                  Consumer<String> onProgress, 
-                                  Consumer<String> onComplete, 
-                                  Consumer<String> onError) {
+    public static void processImage(String imagePath, Integer targetSizeKB) {
         if (imagePath == null || imagePath.isEmpty()) {
-            onError.accept("Please select an image file.");
+            System.err.println("Error: Please select an image file.");
             return;
         }
 
         Task<String> task = new Task<String>() {
             @Override
             protected String call() throws Exception {
-                onProgress.accept("Processing image...");
+                System.out.println("Processing image...");
 
                 String srcImg = imagePath;
                 int dotpos = srcImg.lastIndexOf(".");
@@ -59,38 +55,37 @@ public class ImageProcessingService {
 
                 // Determine processing method based on file extension
                 if (extension.toLowerCase().equals(".png")) {
-                    return convertPngToJpg(srcImg, onProgress);
+                    return convertPngToJpg(srcImg);
                 } else {
                     if (targetSizeKB == null) {
-                        return "Please set the target file size in KB for JPEG compression.";
+                        return "Error: Please set the target file size in KB for JPEG compression.";
                     }
-                    return compressJpeg(srcImg, targetSizeKB, onProgress);
+                    return compressJpeg(srcImg, targetSizeKB);
                 }
             }
         };
 
-        task.setOnSucceeded(e -> onComplete.accept(task.getValue()));
+        task.setOnSucceeded(e -> System.out.println("Success: " + task.getValue()));
         task.setOnFailed(e -> {
             Throwable exception = task.getException();
-            onError.accept("Error: " + (exception != null ? exception.getMessage() : "Unknown error"));
+            System.err.println("Error: " + (exception != null ? exception.getMessage() : "Unknown error"));
         });
 
         new Thread(task).start();
     }
 
-    private static String convertPngToJpg(String srcImg, Consumer<String> onProgress) {
+    private static String convertPngToJpg(String srcImg) {
         try {
-            onProgress.accept("Converting PNG to JPG...");
+            System.out.println("Converting PNG to JPG...");
 
             // Read the PNG image
             BufferedImage pngImage = ImageIO.read(new File(srcImg));
 
             // Create a new BufferedImage with RGB color model (no transparency)
             BufferedImage jpgImage = new BufferedImage(
-                pngImage.getWidth(), 
-                pngImage.getHeight(), 
-                BufferedImage.TYPE_INT_RGB
-            );
+                    pngImage.getWidth(),
+                    pngImage.getHeight(),
+                    BufferedImage.TYPE_INT_RGB);
 
             // Draw the PNG onto the JPG image with white background
             Graphics2D g2d = jpgImage.createGraphics();
@@ -108,16 +103,16 @@ public class ImageProcessingService {
             File output = new File(destImg);
             ImageIO.write(jpgImage, "jpg", output);
 
-            onProgress.accept("Conversion completed!");
+            System.out.println("Conversion completed!");
             return "PNG converted to JPG successfully!\nSaved as: " + output.getName();
         } catch (IOException e) {
             return "Error converting PNG to JPG: " + e.getMessage();
         }
     }
 
-    private static String compressJpeg(String srcImg, int sizeThreshold, Consumer<String> onProgress) throws IOException {
-        onProgress.accept("Starting JPEG compression...");
-        
+    private static String compressJpeg(String srcImg, int sizeThreshold) throws IOException {
+        System.out.println("Starting JPEG compression...");
+
         File file = new File(srcImg);
         long fileSize = file.length();
 
@@ -135,18 +130,19 @@ public class ImageProcessingService {
 
         float quality = 1.0f;
         float step = 0.1f;
-        
+
         // Generate output filename
         int dotpos = srcImg.lastIndexOf(".");
         String destImg = srcImg.substring(0, dotpos) + "_compressed" + srcImg.substring(dotpos);
 
         while (fileSize / 1024 > sizeThreshold && quality > 0.1f) {
             quality -= step;
-            
-            onProgress.accept("Compressing... Quality: " + String.format("%.1f", quality * 100) + "%");
-            
+
+            System.out.println("Compressing... Quality: " + String.format("%.1f", quality * 100) + "%");
+
             File fileOut = new File(destImg);
-            if (fileOut.exists()) fileOut.delete();
+            if (fileOut.exists())
+                fileOut.delete();
 
             try (FileImageOutputStream output = new FileImageOutputStream(fileOut)) {
                 writer.setOutput(output);
@@ -155,14 +151,17 @@ public class ImageProcessingService {
             }
 
             long newFileSize = fileOut.length();
-            if (newFileSize == fileSize) break;
+            if (newFileSize == fileSize)
+                break;
             fileSize = newFileSize;
-            
-            if (quality <= step) step *= 0.1f;
+
+            if (quality <= step)
+                step *= 0.1f;
         }
 
         writer.dispose();
-        onProgress.accept("Compression completed!");
-        return "JPEG compressed successfully!\nFinal size: " + fileSize / 1024 + "KB\nSaved as: " + new File(destImg).getName();
+        System.out.println("Compression completed!");
+        return "JPEG compressed successfully!\nFinal size: " + fileSize / 1024 + "KB\nSaved as: "
+                + new File(destImg).getName();
     }
 }

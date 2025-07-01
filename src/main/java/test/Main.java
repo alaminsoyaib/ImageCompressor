@@ -14,7 +14,6 @@ public class Main extends Application {
         // FXMLLoader(getClass().getResource("ImageConvertAndCompress.fxml"));
         FXMLLoader loader = new FXMLLoader(getClass().getResource("main.fxml"));
         Parent root = loader.load();
-        // Note: secondController doesn't need HostServices, so we don't set it
         primaryStage.setTitle("Image Processing (JPEG/PNG)");
         primaryStage.setScene(new Scene(root, 600, 400));
         primaryStage.show();

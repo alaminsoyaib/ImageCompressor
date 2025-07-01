@@ -24,15 +24,6 @@ public class Controller {
     @FXML
     protected void onCompressClick(MouseEvent event) {
         Integer targetSize = 500;
-        ImageProcessingService.processImage(
-                imagePath.getText(),
-                targetSize,
-                message -> {
-                }, // onProgress - currently ignored
-                result -> {
-                }, // onComplete - currently ignored
-                error -> {
-                } // onError - currently ignored
-        );
+        ImageProcessingService.processImage(imagePath.getText(), targetSize);
     }
 }
