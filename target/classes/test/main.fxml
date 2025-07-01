@@ -14,9 +14,9 @@
     </Button>
   <TextField fx:id="imagePath" editable="false" onMouseClicked="#onImagePathClick" promptText="Choose Image">
     </TextField>
-  <TextField fx:id="fileSize" editable="true" promptText="Size in KB">
+  <TextField fx:id="fileSize" editable="true" promptText="Target size in KB (for JPEG compression only)">
     </TextField>
-  <Button fx:id="compressButton" onMouseClicked="#onCompressClick" style="-fx-background-color: rgb(77,102,204);" text="COMPRESS!" textFill="#ffffffe3">
+  <Button fx:id="compressButton" onMouseClicked="#onCompressClick" style="-fx-background-color: rgb(77,102,204);" text="PROCESS IMAGE" textFill="#ffffffe3">
     </Button>
   <TextField fx:id="done" alignment="CENTER" editable="false" visible="false"/>
   <Hyperlink onMouseClicked="#openFollowMeLink" text="Follow me @hamidInventions"/>

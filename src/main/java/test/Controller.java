@@ -54,8 +54,8 @@ public class Controller {
 
         compressButton.setDisable(true);
 
-        if (imagePath.getText().isEmpty() || fileSize.getText().isEmpty()) {
-            setDoneText("Choose Image and set Max Size.");
+        if (imagePath.getText().isEmpty()) {
+            setDoneText("Please choose an image file.");
             return;
         }
 
@@ -67,7 +67,12 @@ public class Controller {
 
         // Determine compression method based on file extension
         if (extension.toLowerCase().equals(".png")) {
+            convertPngToJpg(srcImg, srcImg.substring(0, dotpos) + "_converted.jpg");
         } else {
+            if (fileSize.getText().isEmpty()) {
+                setDoneText("Please set the target file size in KB for compression.");
+                return;
+            }
             reduceImageQuality(imagePath.getText(), destImg, Integer.parseInt(fileSize.getText()));
         }
         compressButton.setDisable(false);
@@ -139,6 +144,43 @@ public class Controller {
 
         new Thread(task).start();
 
+    }
+
+    private void convertPngToJpg(String srcImg, String destImg) {
+        Task<String> task = new Task<String>() {
+            @Override
+            protected String call() throws Exception {
+                try {
+                    // Read the PNG image
+                    BufferedImage pngImage = ImageIO.read(new File(srcImg));
+
+                    // Create a new BufferedImage with RGB color model (no transparency)
+                    BufferedImage jpgImage = new BufferedImage(
+                            pngImage.getWidth(),
+                            pngImage.getHeight(),
+                            BufferedImage.TYPE_INT_RGB);
+
+                    // Draw the PNG onto the JPG image with white background
+                    Graphics2D g2d = jpgImage.createGraphics();
+                    g2d.setColor(java.awt.Color.WHITE);
+                    g2d.fillRect(0, 0, jpgImage.getWidth(), jpgImage.getHeight());
+                    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                    g2d.drawImage(pngImage, 0, 0, null);
+                    g2d.dispose();
+
+                    // Write the JPG image
+                    File output = new File(destImg);
+                    ImageIO.write(jpgImage, "jpg", output);
+
+                    return "PNG converted to JPG successfully!";
+                } catch (IOException e) {
+                    return "Error converting PNG to JPG: " + e.getMessage();
+                }
+            }
+        };
+
+        task.setOnSucceeded(e -> setDoneText(task.getValue()));
+        new Thread(task).start();
     }
 
     private void setDoneText(String s) {
