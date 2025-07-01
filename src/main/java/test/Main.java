@@ -10,7 +10,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("ImageConvertAndCompress.fxml"));
+        // FXMLLoader loader = new
+        // FXMLLoader(getClass().getResource("ImageConvertAndCompress.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("main.fxml"));
         Parent root = loader.load();
         // Note: secondController doesn't need HostServices, so we don't set it
         primaryStage.setTitle("Image Processing (JPEG/PNG)");

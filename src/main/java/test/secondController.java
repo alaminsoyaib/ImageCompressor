@@ -37,7 +37,7 @@ public class secondController {
     protected void onSelectImageClick(MouseEvent event) {
         Modal.setText("Selecting image...");
 
-        selectedImageFile = ImageProcessingService.selectImageFile();
+        selectedImageFile = ImageProcessingService.selectImageFile(); // important
 
         if (selectedImageFile != null) {
             image.setText("Selected: " + selectedImageFile.getName());
@@ -90,28 +90,15 @@ public class secondController {
         ImageProcessingService.processImage(
                 selectedImageFile.getAbsolutePath(),
                 targetSize,
-                new ImageProcessingService.ProcessingCallback() {
-                    @Override
-                    public void onProgress(String message) {
-                        Platform.runLater(() -> Modal.setText(message));
-                    }
-
-                    @Override
-                    public void onComplete(String result) {
-                        Platform.runLater(() -> {
-                            Modal.setText(result);
-                            ProcessButton.setDisable(false);
-                        });
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        Platform.runLater(() -> {
-                            Modal.setText(error);
-                            ProcessButton.setDisable(false);
-                        });
-                    }
-                });
+                message -> Platform.runLater(() -> Modal.setText(message)), // onProgress
+                result -> Platform.runLater(() -> { // onComplete
+                    Modal.setText(result);
+                    ProcessButton.setDisable(false);
+                }),
+                error -> Platform.runLater(() -> { // onError
+                    Modal.setText(error);
+                    ProcessButton.setDisable(false);
+                }));
     }
 
     private String getFileExtension(String fileName) {
