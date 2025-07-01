@@ -49,18 +49,16 @@ public class ImageProcessingService {
             protected String call() throws Exception {
                 System.out.println("Processing image...");
 
-                String srcImg = imagePath;
-                int dotpos = srcImg.lastIndexOf(".");
-                String extension = srcImg.substring(dotpos);
+                String extension = imagePath.substring(imagePath.lastIndexOf("."));
 
                 // Determine processing method based on file extension
                 if (extension.toLowerCase().equals(".png")) {
-                    return convertPngToJpg(srcImg);
+                    return convertPngToJpg(imagePath);
                 } else {
                     if (targetSizeKB == null) {
                         return "Error: Please set the target file size in KB for JPEG compression.";
                     }
-                    return compressJpeg(srcImg, targetSizeKB);
+                    return compressJpeg(imagePath, targetSizeKB);
                 }
             }
         };

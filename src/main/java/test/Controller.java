@@ -23,7 +23,6 @@ public class Controller {
 
     @FXML
     protected void onCompressClick(MouseEvent event) {
-        Integer targetSize = 500;
-        ImageProcessingService.processImage(imagePath.getText(), targetSize);
+        ImageProcessingService.processImage(imagePath.getText(), 500);
     }
 }
